@@ -1,12 +1,16 @@
 #include "hash_table.hpp"
 #include <iostream>
 
-
 HashTable::HashTable(size_t initial)
     : table(initial), capacity(initial), count(0) {}
 
+/// DJB2 Hash (http://www.cse.yorku.ca/~oz/hash.html)
 size_t HashTable::hash_function(const std::string &key) const {
-    return std::hash<std::string>{}(key) % capacity;
+    size_t hash = 5381;
+    for (char c : key) {
+        hash = ((hash << 5) + hash) + static_cast<unsigned char>(c); // hash * 33 + c
+    }
+    return hash % capacity;
 }
 
 void HashTable::rehash(size_t new_capacity) {
@@ -29,6 +33,9 @@ void HashTable::insert(const Book &book) {
     }
 
     size_t idx = hash_function(book.getIsbn());
+
+    // DEBUB to Check hash distribution
+    std::cout << "Inserting ISBN: " << book.getIsbn() << " to bucket " << idx << "\n";
 
     for (const auto &b : table[idx]) {
         if (b.getIsbn() == book.getIsbn()) {
