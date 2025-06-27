@@ -87,34 +87,6 @@ void printBookRow(const Book& book) {
               << "\n";
 }
 
-
-// void displayPaginatedBooks(const std::vector<Book>& books, size_t perPage = 5) {
-//     size_t total = books.size();
-//     size_t pages = (total + perPage - 1) / perPage;
-//     size_t currentPage = 0;
-//     char command;
-
-//     do {
-//         system("clear"); // or system("CLS"); for Windows
-//         size_t start = currentPage * perPage;
-//         size_t end = std::min(start + perPage, total);
-
-//         std::cout << "Page " << (currentPage + 1) << " of " << pages << "\n\n";
-//         printTableHeader();
-//         for (size_t i = start; i < end; ++i) {
-//             printBookRow(books[i]);
-//         }
-
-//         std::cout << "\n[n] Next | [p] Prev | [q] Quit: ";
-//         std::cin >> command;
-//         command = std::tolower(command);
-
-//         if (command == 'n' && currentPage + 1 < pages) ++currentPage;
-//         else if (command == 'p' && currentPage > 0) --currentPage;
-
-//     } while (command != 'q');
-// }
-
 void displayPaginatedBooks(const std::vector<Book>& books, size_t perPage = 5) {
     size_t total = books.size();
     size_t pages = (total + perPage - 1) / perPage;
@@ -122,7 +94,7 @@ void displayPaginatedBooks(const std::vector<Book>& books, size_t perPage = 5) {
     char command;
 
     do {
-        system("clear"); // or "CLS" for Windows
+        system("clear");
         size_t start = currentPage * perPage;
         size_t end = std::min(start + perPage, total);
 
@@ -141,7 +113,7 @@ void displayPaginatedBooks(const std::vector<Book>& books, size_t perPage = 5) {
 
     } while (command != 'q');
 
-    std::cin.ignore(); // Clean up newline after char input
+    std::cin.ignore();
 }
 
 void viewBooks(HashTable& books) {
@@ -161,41 +133,22 @@ void deleteBook(HashTable& books) {
         return;
     }
 
-    // Show book list with pagination
     displayPaginatedBooks(all);
 
-    // Now prompt user to delete
     std::string isbn;
     std::cout << "\nEnter ISBN to delete: ";
     std::getline(std::cin, isbn);
 
     if (books.erase(isbn)) {
-        std::cout << "✅ Book with ISBN " << isbn << " deleted successfully.\n";
+        std::cout << "Book with ISBN " << isbn << " deleted successfully.\n";
     } else {
-        std::cout << "❌ Book with ISBN " << isbn << " not found.\n";
+        std::cout << "Book with ISBN " << isbn << " not found.\n";
     }
 }
 
 
 
 void recommendBook(HashTable& books) {
-    // std::string isbn;
-    // std::cout << "Enter ISBN to get recommendations: ";
-    // std::getline(std::cin, isbn);
-    // BookGraph graph(books);
-    // graph.buildGraph();
-
-    // std::vector<Book> recs = graph.recommend(isbn);
-    // if (recs.empty()) {
-    //     std::cout << "No recommendations found.\n";
-    // } else {
-    //     std::cout << "\nRecommendations:\n";
-    //     for (const auto& b : recs) {
-    //         b.display();
-    //         std::cout << "----------------------\n";
-    //     }
-    // }
-
     std::vector<Book> all = books.getAllBooks();
 
     if (all.empty()) {
@@ -203,55 +156,26 @@ void recommendBook(HashTable& books) {
         return;
     }
 
-    // Step 1: Show table so user can see valid ISBNs
     std::cout << "Browse available books to pick an ISBN:\n";
     displayPaginatedBooks(all);
 
-    // Step 2: Prompt for ISBN
     std::string isbn;
     std::cout << "\nEnter ISBN to get recommendations: ";
     std::getline(std::cin, isbn);
 
-    // Step 3: Build graph and get recommendations
     BookGraph graph(books);
     graph.buildGraph();
     std::vector<Book> recs = graph.recommend(isbn);
 
-    // Step 4: Show recommendations
     if (recs.empty()) {
-        std::cout << "❌ No recommendations found for ISBN: " << isbn << "\n";
+        std::cout << "No recommendations found for ISBN: " << isbn << "\n";
     } else {
-        std::cout << "\n📚 Recommended books based on " << isbn << ":\n";
+        std::cout << "\nRecommended books based on " << isbn << ":\n";
         displayPaginatedBooks(recs);
     }
 }
 
 void sortBooks(HashTable& books) {
-    // std::vector<Book> sorted = books.getAllBooks();
-
-    // std::cout << "\nSort by:\n";
-    // std::cout << "1. Stock Ascending\n";
-    // std::cout << "2. Stock Descending\n";
-    // std::cout << "3. Price Ascending\n";
-    // std::cout << "4. Price Descending\n";
-    // std::cout << "Choose option: ";
-    // int opt;
-    // std::cin >> opt;
-    // clearInput();
-
-    // switch (opt) {
-    //     case 1: insertionSortByStock(sorted, true); break;
-    //     case 2: insertionSortByStock(sorted, false); break;
-    //     case 3: insertionSortByPrice(sorted, true); break;
-    //     case 4: insertionSortByPrice(sorted, false); break;
-    //     default: std::cout << "Invalid option.\n"; return;
-    // }
-
-    // for (const auto& b : sorted) {
-    //     b.display();
-    //     std::cout << "----------------------\n";
-    // }
-
     std::vector<Book> all = books.getAllBooks();
 
     if (all.empty()) {
@@ -268,7 +192,7 @@ void sortBooks(HashTable& books) {
 
     int option;
     std::cin >> option;
-    std::cin.ignore(); // clear newline
+    std::cin.ignore();
 
     switch (option) {
         case 1:
@@ -284,18 +208,16 @@ void sortBooks(HashTable& books) {
             insertionSortByPrice(all, false);
             break;
         default:
-            std::cout << "❌ Invalid option.\n";
+            std::cout << "Invalid option.\n";
             return;
     }
 
-    // Show sorted list with pagination
     displayPaginatedBooks(all);
 }
 
 int main() {
     HashTable books;
 
-    // Sample initial data
     books.insert(Book("978-1-945209-05-5", "C++ Primer", "Stanley Lippman", "Programming", 10, 45.99));
     books.insert(Book("978-1-945219-05-5", "Effective C++", "Scott Meyers", "Programming", 5, 39.99));
     books.insert(Book("978-1-945999-05-5", "Dune", "Frank Herbert", "Sci-Fi", 3, 29.99));
