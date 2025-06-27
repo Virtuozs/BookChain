@@ -34,8 +34,8 @@ void HashTable::insert(const Book &book) {
 
     size_t idx = hash_function(book.getIsbn());
 
-    // DEBUB to Check hash distribution
-    std::cout << "Inserting ISBN: " << book.getIsbn() << " to bucket " << idx << "\n";
+    // DEBUG to Check hash distribution
+    // std::cout << "Inserting ISBN: " << book.getIsbn() << " to bucket " << idx << "\n";
 
     for (const auto &b : table[idx]) {
         if (b.getIsbn() == book.getIsbn()) {

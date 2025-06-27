@@ -4,6 +4,16 @@
 #include <limits>
 #include <iomanip>
 
+// Clear Screen Utility
+void clearScreen() {
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
+}
+
+
 // Sorting
 void insertionSortByStock(std::vector<Book>& books, bool ascending = true){
     for (size_t i = 1; i < books.size(); ++i) {
@@ -42,10 +52,13 @@ void clearInput() {
 }
 
 void addBook(HashTable& books) {
+    clearScreen(); 
+
     std::string isbn, title, author, genre;
     int stock;
     double price;
-
+    
+    std::cout << "Inserting New Book: \n";
     std::cout << "Enter ISBN: ";
     std::getline(std::cin, isbn);
     std::cout << "Enter Title: ";
@@ -94,7 +107,7 @@ bool displayPaginatedBooks(const std::vector<Book>& books, size_t perPage = 5) {
     char command;
 
     do {
-        system("clear"); // or "CLS" for Windows
+        system("clear");
         size_t start = currentPage * perPage;
         size_t end = std::min(start + perPage, total);
 
@@ -222,6 +235,7 @@ void sortBooks(HashTable& books) {
 }
 
 int main() {
+    clearScreen();
     HashTable books;
 
     books.insert(Book("978-1-945209-05-5", "C++ Primer", "Stanley Lippman", "Programming", 10, 45.99));
@@ -233,7 +247,7 @@ int main() {
 
     int choice;
     do {
-        std::cout << "\n====== Book Manager ======\n";
+        std::cout << "\n====== Book Chain ======\n";
         std::cout << "1. Add Book\n";
         std::cout << "2. Delete Book\n";
         std::cout << "3. View All Books\n";
@@ -258,3 +272,20 @@ int main() {
 
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
