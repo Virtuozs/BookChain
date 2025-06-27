@@ -87,14 +87,14 @@ void printBookRow(const Book& book) {
               << "\n";
 }
 
-void displayPaginatedBooks(const std::vector<Book>& books, size_t perPage = 5) {
+bool displayPaginatedBooks(const std::vector<Book>& books, size_t perPage = 5) {
     size_t total = books.size();
     size_t pages = (total + perPage - 1) / perPage;
     size_t currentPage = 0;
     char command;
 
     do {
-        system("clear");
+        system("clear"); // or "CLS" for Windows
         size_t start = currentPage * perPage;
         size_t end = std::min(start + perPage, total);
 
@@ -104,16 +104,16 @@ void displayPaginatedBooks(const std::vector<Book>& books, size_t perPage = 5) {
             printBookRow(books[i]);
         }
 
-        std::cout << "\n[n] Next | [p] Prev | [q] Continue: ";
+        std::cout << "\n[n] Next | [p] Prev | [c] Continue | [q] Cancel: ";
         std::cin >> command;
         command = std::tolower(command);
 
         if (command == 'n' && currentPage + 1 < pages) ++currentPage;
         else if (command == 'p' && currentPage > 0) --currentPage;
+        else if (command == 'c') return true;
+        else if (command == 'q') return false;
 
-    } while (command != 'q');
-
-    std::cin.ignore();
+    } while (true);
 }
 
 void viewBooks(HashTable& books) {
@@ -133,11 +133,16 @@ void deleteBook(HashTable& books) {
         return;
     }
 
-    displayPaginatedBooks(all);
+    if (!displayPaginatedBooks(all)) {
+        std::cout << "Delete cancelled.\n";
+        return;
+    }
 
     std::string isbn;
+    std::cin.ignore();
     std::cout << "\nEnter ISBN to delete: ";
     std::getline(std::cin, isbn);
+    
 
     if (books.erase(isbn)) {
         std::cout << "Book with ISBN " << isbn << " deleted successfully.\n";
@@ -145,8 +150,6 @@ void deleteBook(HashTable& books) {
         std::cout << "Book with ISBN " << isbn << " not found.\n";
     }
 }
-
-
 
 void recommendBook(HashTable& books) {
     std::vector<Book> all = books.getAllBooks();
@@ -156,10 +159,13 @@ void recommendBook(HashTable& books) {
         return;
     }
 
-    std::cout << "Browse available books to pick an ISBN:\n";
-    displayPaginatedBooks(all);
+    if (!displayPaginatedBooks(all)) {
+        std::cout << "Recommendation cancelled.\n";
+        return;
+    }
 
     std::string isbn;
+    std::cin.ignore();
     std::cout << "\nEnter ISBN to get recommendations: ";
     std::getline(std::cin, isbn);
 
